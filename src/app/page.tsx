@@ -1,11 +1,16 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <Button className="mt-6 bg-blue-500 text-white hover:bg-blue-600">
+    <div className=" p-4 flex flex-col gap-11 items-start justify-center min-h-screen bg-gray-100">
+      <Button variant="elevated">
         Click Me
       </Button>
+      <Input placeholder="Click Me" />
+      <Progress value={50} />
     </div>
   );
 }
