@@ -1,51 +1,28 @@
-import { Footer } from "@/components/home/Footer";
-import { Navbar } from "@/components/home/Navbar";
-import { SearchFilters } from "./search-filters";
-import { getPayload } from "payload";
-import config from "@payload-config";
-import { Category } from "@/payload-types";
-import { CustomCategory } from "./types";
-
+import { SearchFilters, SearchFiltersSkeleton } from "./search-filters";
+import { Navbar } from "@/components/home/navbar";
+import { Footer } from "@/components/home/footer";
+import { getQueryClient, trpc } from "@/trpc/server";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout = async ({ children }: LayoutProps) => {
-  const payload = await getPayload({
-    config: config,
-  });
-
-  const categoriesData = await payload.find({
-    collection: "categories",
-    depth: 1,
-    pagination: false,
-    where: {
-      parentCategory: {
-        equals: null,
-      },
-    },
-    sort: "name",
-  });
-
-  const formattedCategories: CustomCategory[] = categoriesData.docs.map(
-    (category) => ({
-      ...category,
-      subcategories: (category.subcategories?.docs ?? []).map(
-        (subcategory) => ({
-          ...(subcategory as Category),
-          subcategories: undefined,
-        })
-      ),
-    })
-  );
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(trpc.categories.getMany.queryOptions());
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <SearchFilters data={formattedCategories} />
-      <main className="flex-1 bg-[#F4F4F0]">{children}</main>
-      <Footer />
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <Suspense fallback={<SearchFiltersSkeleton />}>
+          <SearchFilters />
+        </Suspense>
+        <main className="flex-1 bg-[#F4F4F0]">{children}</main>
+        <Footer />
+      </div>
+    </HydrationBoundary>
   );
 };
 

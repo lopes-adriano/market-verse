@@ -5,9 +5,9 @@ import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { usePathname } from "next/navigation";
-import { SideBar } from "./Sidebar";
 import { useState } from "react";
 import { MenuIcon } from "lucide-react";
+import { SideBar } from "./sidebar";
 
 const poppins = Poppins({
   subsets: ["latin"],

@@ -4,29 +4,31 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { CustomCategory } from "../types";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTRPC } from "@/trpc/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { CategoryOutput } from "@/modules/categories/types";
 
 interface CategoriesSidebarProps {
-  data?: CustomCategory[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export const CategoriesSidebar = ({
-  data,
   open,
   onOpenChange,
 }: CategoriesSidebarProps) => {
   const [parentCategories, setParentCategories] = useState<
-    CustomCategory[] | null
+    CategoryOutput[] | null
   >(null);
   const [selectedCategory, setSelectedCategory] =
-    useState<CustomCategory | null>(null);
+    useState<CategoryOutput | null>(null);
   const router = useRouter();
+  const trpc = useTRPC();
+  const { data } = useSuspenseQuery(trpc.categories.getMany.queryOptions());
 
   const currentCategories = parentCategories || data || [];
   const backgrounColor = selectedCategory?.color || "white";
@@ -39,9 +41,9 @@ export const CategoriesSidebar = ({
     onOpenChange(open);
   }
 
-  function handleCategoryClick(category: CustomCategory) {
+  function handleCategoryClick(category: CategoryOutput) {
     if (category.subcategories?.length) {
-      setParentCategories(category.subcategories as CustomCategory[]);
+      setParentCategories(category.subcategories as CategoryOutput[]);
       setSelectedCategory(category);
       return;
     }
@@ -79,7 +81,7 @@ export const CategoriesSidebar = ({
         style={{ backgroundColor: backgrounColor }}
       >
         <SheetHeader className="p-4 border-b">
-          <SheetTitle>Categorías</SheetTitle>
+          <SheetTitle>Categorias</SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex flex-col h-full overflow-y-auto pb-2">
           {parentCategories && (

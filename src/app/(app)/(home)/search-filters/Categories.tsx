@@ -1,15 +1,15 @@
 "use client";
 
-import { CategoryDropdown } from "./CategoryDropdown";
-import { CustomCategory } from "../types";
+import { CategoryDropdown } from "./category-dropdown";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ListFilterIcon } from "lucide-react";
-import { CategoriesSidebar } from "./CategoriesSidebar";
+import { CategoriesSidebar } from "./categories-sidebar";
+import { CategoryOutput } from "@/modules/categories/types";
 
 interface CategoriesProps {
-  data?: CustomCategory[];
+  data?: CategoryOutput[];
 }
 
 export const Categories = ({ data }: CategoriesProps) => {
@@ -17,7 +17,7 @@ export const Categories = ({ data }: CategoriesProps) => {
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllref = useRef<HTMLDivElement>(null);
 
-  const [visibleCount, setVisibleCount] = useState(data ? data.length : 0);
+  const [visibleCount, setVisibleCount] = useState(0);
   const [isAnyHovered, setIsAnyHovered] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const activeCategory = "all";
@@ -55,6 +55,8 @@ export const Categories = ({ data }: CategoriesProps) => {
       setVisibleCount(visible);
     }
 
+    calculateVisible();
+
     const resizeObserver = new ResizeObserver(calculateVisible);
     resizeObserver.observe(containerRef.current!);
 
@@ -65,11 +67,7 @@ export const Categories = ({ data }: CategoriesProps) => {
 
   return (
     <div className="relative w-full">
-      <CategoriesSidebar
-        open={isSidebarOpen}
-        onOpenChange={setIsSidebarOpen}
-        data={data}
-      />
+      <CategoriesSidebar open={isSidebarOpen} onOpenChange={setIsSidebarOpen} />
 
       {/* Invisible copy for measure */}
       <div

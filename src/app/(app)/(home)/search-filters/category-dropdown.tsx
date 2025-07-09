@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { useDropdownPosition } from "./useDropdownPosition";
-import { SubcategoryMenu } from "./SubcategoryMenu";
-import { CustomCategory } from "../types";
+import { SubcategoryMenu } from "./subcategory-menu";
 import Link from "next/link";
+import { CategoryOutput } from "@/modules/categories/types";
 
 interface CategoryDropdownProps {
-  category: CustomCategory;
+  category: CategoryOutput;
   isActive: boolean;
   isHovered: boolean;
 }
